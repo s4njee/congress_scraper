@@ -38,7 +38,7 @@ spec:
               name: congress-storage
       containers:
         - name: "congress-api-sha256-1"
-          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper'
+          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:102cf41f6e416d8dd4c54d046e1991e4172531d8ca30f9bddc53fc9d9427de43'
 
           imagePullPolicy: Always
           env:
@@ -65,5 +65,5 @@ spec:
               memory: 256Mi
             limits:
               cpu: 1000m
-              memory 1024Mi
+              memory: 1024Mi
 
