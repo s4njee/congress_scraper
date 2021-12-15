@@ -32,13 +32,13 @@ spec:
         - name: config-data
           image: ubuntu:hirsute
           command: ["/bin/sh","-c"]
-          args: ["apt update; apt install -y wget tar zstd; wget https://www.dropbox.com/s/z3kqzw593jsx19m/data.tar.zst?dl=1; tar xvf data.tar.zstd -C /congress;"]
+          args: ["apt update; apt install -y wget tar zstd; wget https://www.dropbox.com/s/z3kqzw593jsx19m/data.tar.zst?dl=1; tar xvf data.tar.zstd?dl=1 -C /congress;"]
           volumeMounts:
             - mountPath: /congress
               name: congress-storage
       containers:
         - name: "congress-api-sha256-1"
-          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:0e84ac0eb9406fc2db6942f43113814b06cb972000c179f9353e2d52f6d2646d'
+          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:b094e540988d28f3c91fde469ff4cfa79e84b840545c86ac9fa793a1a6e054f0'
 
           imagePullPolicy: Always
           env:
