@@ -1,58 +1,56 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: CronJob
 metadata:
   name: csearch.scraper
   namespace: postgres-operator
 spec:
-  selector:
-    matchLabels:
-      app: csearch.scraper
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: csearch.scraper
+  schedule: "* */6 * * *"
+  jobTemplate:
     spec:
-      volumes:
-        - name: congress-storage
-          persistentVolumeClaim:
-            claimName: congress-pvc
-      initContainers:
-        - name: config-data
-          image: ubuntu:hirsute
-          command: ["/bin/sh","-c"]
-          args: ["apt update; apt install -y wget tar zstd git; git clone https://github.com/unitedstates/congress.git /temp; mv /temp/* /congress; wget https://www.dropbox.com/s/z3kqzw593jsx19m/data.tar.zst?dl=1; tar --zstd -xvf data.tar.zst?dl=1 -C /congress;"]
-          volumeMounts:
-            - mountPath: /congress
-              name: congress-storage
-      containers:
-        - name: "congress-api-sha256-1"
-          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper'
-
-          imagePullPolicy: Always
-          env:
-            - name: DB_VENDOR
-              value: "postgres"
-            - name: DB_ADDR
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: host } }
-            - name: DB_URI
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: uri } }
-            - name: DB_PORT
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: port } }
-            - name: DB_DATABASE
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: dbname } }
-            - name: DB_USER
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: user } }
-            - name: DB_PASSWORD
-              valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: password } }
-          volumeMounts:
+      template:
+        spec:
+          volumes:
             - name: congress-storage
-              mountPath: /congress
-          resources:
-            requests:
-              cpu: 250m
-              memory: 256Mi
-            limits:
-              cpu: 1000m
-              memory: 1024Mi
+              persistentVolumeClaim:
+                claimName: congress-pvc
+          initContainers:
+            - name: config-data
+              image: ubuntu:hirsute
+              command: ["/bin/sh","-c"]
+              args: ["apt update; apt install -y wget tar zstd git; git clone https://github.com/unitedstates/congress.git /congress/temp; mv /congress/temp/* /congress/; wget https://www.dropbox.com/s/z3kqzw593jsx19m/data.tar.zst?dl=1; tar --zstd -xvf data.tar.zst?dl=1 -C /congress;"]
+              volumeMounts:
+                - mountPath: /congress
+                  name: congress-storage
+          containers:
+            - name: "congress-api-sha256-1"
+              image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper'
+
+              imagePullPolicy: Always
+              env:
+                - name: DB_VENDOR
+                  value: "postgres"
+                - name: DB_ADDR
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: host } }
+                - name: DB_URI
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: uri } }
+                - name: DB_PORT
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: port } }
+                - name: DB_DATABASE
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: dbname } }
+                - name: DB_USER
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: user } }
+                - name: DB_PASSWORD
+                  valueFrom: { secretKeyRef: { name: csearch-db-pguser-csearch-db, key: password } }
+              volumeMounts:
+                - name: congress-storage
+                  mountPath: /congress
+              resources:
+                requests:
+                  cpu: 250m
+                  memory: 256Mi
+                limits:
+                  cpu: 1000m
+                  memory: 1024Mi
+          restartPolicy: OnFailure
+
 
