@@ -20,7 +20,7 @@ spec:
       initContainers:
         - name: myapp-container
           image: busybox:1.28
-          command: ['rm', '-rf', '/congress/*']
+          command: ['rm', '-rf', '/congress']
           volumeMounts:
             - mountPath: /congress
               name: congress-storage
@@ -44,7 +44,7 @@ spec:
               name: congress-storage
       containers:
         - name: "congress-api-sha256-1"
-          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:2f2ffe4fc8b3eac5c530b3da26da67ce1727c65e81ca1fde9c1b1a330809f9f3'
+          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:0e84ac0eb9406fc2db6942f43113814b06cb972000c179f9353e2d52f6d2646d'
 
           imagePullPolicy: Always
           env:
