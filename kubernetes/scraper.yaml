@@ -18,6 +18,12 @@ spec:
           persistentVolumeClaim:
             claimName: congress-pvc
       initContainers:
+        - name: myapp-container
+          image: busybox:1.28
+          command: ['rm', '-rf', '/congress/*']
+          volumeMounts:
+            - mountPath: /congress
+              name: congress-storage
         - name: git-cloner
           image: alpine/git
           args:
@@ -38,7 +44,7 @@ spec:
               name: congress-storage
       containers:
         - name: "congress-api-sha256-1"
-          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:2625b1d1af6c14db09268879e7f1830c7a6cfde373ad812d3411bbd7d1e4d593'
+          image: 'gcr.io/csearch-335113/github.com/s4njee/congress_scraper@sha256:2f2ffe4fc8b3eac5c530b3da26da67ce1727c65e81ca1fde9c1b1a330809f9f3'
 
           imagePullPolicy: Always
           env:
