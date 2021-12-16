@@ -23,9 +23,9 @@ async def billProcessor(billList, congressNumber, table, session):
     print(f'Processing: Congress: {congressNumber} Type: {billType}')
     for b in billList:
         try:
-            if os.path.exists(f'/congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/fdsys_billstatus.xml'):
+            if os.path.exists(f'congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/fdsys_billstatus.xml'):
                 # print(f'processing {table.__tablename__}/{b}/')
-                filename = f'/congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/fdsys_billstatus.xml'
+                filename = f'congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/fdsys_billstatus.xml'
                 try:
                     tree = ET.parse(filename)
                     root = tree.getroot()
@@ -102,8 +102,8 @@ async def billProcessor(billList, congressNumber, table, session):
                 except:
                     traceback.print_exc()
                     continue
-            elif os.path.exists(f'/congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/data.json'):
-                filePath = f'/congress/data/{congressNumber}/bills/{table.__tablename__}/{bill}/data.json'
+            elif os.path.exists(f'congress/data/{congressNumber}/bills/{table.__tablename__}/{b}/data.json'):
+                filePath = f'congress/data/{congressNumber}/bills/{table.__tablename__}/{bill}/data.json'
                 if os.path.exists(filePath):
                     async with aiofiles.open(filePath) as f:
                         contents = await f.read()
@@ -188,7 +188,7 @@ async def main():
         with Session() as session:
             for congressNumber in congressNumbers:
                 try:
-                    bills = os.listdir(f'/congress/data/{congressNumber}/bills/{table.__tablename__}')
+                    bills = os.listdir(f'congress/data/{congressNumber}/bills/{table.__tablename__}')
                     tasks.append(asyncio.ensure_future(billProcessor(bills, congressNumber, table, session)))
                 except:
                     print(f'not bills for {congressNumber}')
@@ -198,7 +198,8 @@ async def main():
 
 async def update_files(update_only=False):
     print(os.listdir('.'))
-    os.system('/congress/run govinfo --bulkdata=BILLSTATUS')
+    os.chdir('/')
+    os.system('congress/run govinfo --bulkdata=BILLSTATUS')
     if update_only:
         await update()
 
@@ -207,7 +208,7 @@ async def update():
     with Session() as session:
         tasks = []
         for table in tables:
-            bills = os.listdir(f'/congress/data/117/bills/{table.__tablename__}')
+            bills = os.listdir(f'congress/data/117/bills/{table.__tablename__}')
             tasks.append(asyncio.ensure_future(billProcessor(bills, 117, table, session)))
         await asyncio.gather(*tasks)
 

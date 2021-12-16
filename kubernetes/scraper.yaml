@@ -46,10 +46,10 @@ spec:
                   mountPath: /congress
               resources:
                 requests:
-                  cpu: 250m
+                  cpu: 1000m
                   memory: 256Mi
                 limits:
-                  cpu: 1000m
+                  cpu: 3000m
                   memory: 1024Mi
           restartPolicy: OnFailure
 
