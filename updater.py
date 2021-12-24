@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 import asyncio
 import os
 from models import s, hr, sconres, hjres, hres, hconres, sjres, sres
